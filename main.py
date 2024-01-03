@@ -20,7 +20,7 @@ for ii in range(game_rounds):
         blackjack.player_round(jj)
         
     # Croupier round
-    croupier_playing = any(value <= 21 for value in blackjack.players_count[0:-1])
+    croupier_playing = any(value <= 21 for value in blackjack.players_count_soft[0:-1])
     if croupier_playing:
         blackjack.croupier_round(stands_on_17)
     else:
