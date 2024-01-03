@@ -14,16 +14,22 @@ class BlackJack():
         self.number_players = number_players
         self.number_decks = number_decks
         
+        # Players and croupier counts. croupier count is the last value of the array
+        self.players_count = np.zeros(self.number_players + 1, dtype=int)
+        
+        # Players budget
+        self.players_budget = np.zeros(self.number_players, dtype=int)
+        
+        # Flag to indicate if players and croupier have a blackjack
+        self.flag_blackjack = np.zeros(self.number_players + 1, dtype=int)
+            
+    
+    def game_initialization(self):
+        # Shuffle the deck of cards every round
         self.cards_in_deck = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4,
                               5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8,
                               9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10,
                               10, 10, 10, 10, 10, 10, 10, 10] * self.number_decks
-        
-        # Players and croupier counts. croupier count is the last value of the array
-        self.players_count = np.zeros(self.number_players + 1, dtype=int)
-            
-    
-    def game_initialization(self):
         for ii in range(self.number_players + 1):  # Deal 1 card to each player and to croupier
             dealt_card = random.choice(self.cards_in_deck)  # Deal the card
             self.cards_in_deck.remove(dealt_card)  # Remove the card from the deck
@@ -102,5 +108,20 @@ class BlackJack():
             self.possible_actions = [1]
         else:
             self.possible_actions = [0, 1]
+    
+    def budget_delivery(self, bet):
+        croupier_count = self.players_count[-1]
+        for ii in range(self.number_players):
+            player_count = self.players_count[ii]
+            if croupier_count > 21:  # Croupier has passes, which means that player wins
+                self.players_budget[ii] = self.players_budget[ii] + bet
+            else:  # Croupier has not passed
+                if player_count > 21: # Player has passes, so player losses
+                    self.players_budget[ii] = self.players_budget[ii] - bet
+                elif player_count > croupier_count:  # Player is closer to 21, so player wins
+                    self.players_budget[ii] = self.players_budget[ii] + bet
+                elif player_count < croupier_count: # Croupier is closer to 21, so player losses
+                    self.players_budget[ii] = self.players_budget[ii] - bet
+                # else game is tied so no need to adjust budget
         
         

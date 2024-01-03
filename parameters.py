@@ -11,3 +11,5 @@ number_decks = 1
 
 stands_on_17 = True
 protect = True
+bet = 1
+game_rounds = 100
