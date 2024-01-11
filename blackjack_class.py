@@ -41,7 +41,6 @@ class BlackJack():
         
         for ii in range(self.number_players + 1):  # Deal 1 card to each player and to croupier
             dealt_card = random.choice(self.cards_in_deck)  # Deal the card
-            dealt_card = 1
             self.cards_in_deck.remove(dealt_card)  # Remove the card from the deck
             if dealt_card > 1:
                 self.players_count_hard[ii] = dealt_card  # Add the card to the count
@@ -59,7 +58,6 @@ class BlackJack():
         # Deal the second card to each player
         for ii in range(self.number_players):  # Croupier does not receive card now
             dealt_card = random.choice(self.cards_in_deck)  # Deal the card
-            dealt_card = 10
             self.cards_in_deck.remove(dealt_card)  # Remove the card from the deck
             if dealt_card == self.players_count_soft[ii]:
                 self.flag_split[ii] = True
@@ -145,7 +143,6 @@ class BlackJack():
         # Play first croupier round to see if croupier gets a blackjack
         # Deal a card for croupier
         dealt_card = random.choice(self.cards_in_deck)  # Deal the card
-        dealt_card = 10
         self.cards_in_deck.remove(dealt_card)  # Remove the card from the deck
         if not self.flag_player_playing_soft[-1]:  # Croupier does not have an As
             if dealt_card > 1:
