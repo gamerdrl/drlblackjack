@@ -16,8 +16,11 @@ for ii in range(game_rounds):
     
     # Player rounds
     for jj in range(number_players):
-        print("Player", jj+1, "starts the round")
-        blackjack.player_round(jj)
+        if not blackjack.flag_blackjack[jj]:
+            print("Player", jj+1, "starts the round")
+            blackjack.player_round(jj)
+        else:
+            print("Player", jj+1, "has a blackjack")
         
     # Croupier round
     croupier_playing = any(value <= 21 for value in blackjack.players_count_soft[0:-1])
@@ -29,6 +32,7 @@ for ii in range(game_rounds):
     # Budget delivery
     blackjack.budget_delivery(bet)
 
-    print(blackjack.players_count)
+    print(blackjack.players_count_hard)
+    print(blackjack.players_budget)
 
 print(blackjack.players_budget)
