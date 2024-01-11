@@ -36,6 +36,9 @@ class BlackJack():
         # Flag to indicate if players and croupier have a blackjack
         self.flag_blackjack = np.full(self.number_players + 1, False, dtype=bool)
         
+        # Flag to indicate if players has doubled
+        self.flag_double = np.full(self.number_players, False, dtype=bool)
+        
         # Flag to indicate that split is available
         self.flag_split = np.full(self.number_players, False, dtype=bool)
         
@@ -81,6 +84,7 @@ class BlackJack():
     
     def player_round(self, player_id):
         playing = True  # Flag to tell when to stand
+        self.flag_first_action = True  # This flag is used to determine if player is on first action so he can use to double
         # Possible actions:
         # 0: stand
         # 1: hit
@@ -90,12 +94,19 @@ class BlackJack():
         while playing:
             self.get_possible_actions(self.players_count_hard[player_id], self.players_count_hard[-1])  # self.players_count_hard[-1] is croupier count
             action = random.choice(self.possible_actions)
+            action = 2
             # This if is only for the print
             if action == 0:
                 action_string = "stands"
             elif action == 1:
                 action_string = "hits a card"
+            elif action == 2:
+                action_string = "doubles the bet"
             print("Player", player_id+1, action_string)
+            if action == 2:  # Player doubles the bet
+                action = 1       # Do as a normal hit
+                playing = False  # and end the game
+                self.flag_double[player_id] = True
             
             if action == 0:
                 playing = False  # End player round
@@ -208,11 +219,20 @@ class BlackJack():
             self.possible_actions = [1]
         else:
             self.possible_actions = [0, 1]
+            
+        if self.flag_first_action:
+            self.possible_actions.append(2)
+            self.flag_first_action = False
+        
+        if croupier_count == 11:  # Add the possibility of protect if croupier has an As
+            self.possible_actions.append(4)
     
     
     def budget_delivery(self, bet):
-        croupier_count = self.players_final_count[-1]
+        croupier_count = self.players_final_count[-1]  # Note tha in the case where all player have passed this value will be 0, but the fact that players passed is dominant
         for ii in range(self.number_players):
+            if self.flag_double:
+                bet = 2*bet
             player_count = self.players_final_count[ii]  # Note that in the case where the player has a blackjack this value will be 0, but flag_flagjack will appear before
             if player_count > 21:  # Player has passed, so player losses
                 self.players_budget[ii] = self.players_budget[ii] - bet
