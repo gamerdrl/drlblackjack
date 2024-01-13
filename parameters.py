@@ -6,7 +6,7 @@ Created on Wed Jan  3 11:36:22 2024
 @author: fran
 """
 
-number_players = 1
+number_players = 3
 number_decks = 1
 
 stands_on_17 = True

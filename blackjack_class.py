@@ -16,11 +16,6 @@ class BlackJack():
         
         # Players budget
         self.players_budget = np.zeros(self.number_players)
-        
-        # Players and croupier counts. croupier count is the last value of the array
-        self.players_count_hard  = np.zeros(self.number_players + 1, dtype=int)
-        self.players_count_soft  = np.zeros(self.number_players + 1, dtype=int)
-        self.players_final_count = np.zeros(self.number_players + 1, dtype=int)
             
     
     def game_initialization(self):
@@ -29,6 +24,11 @@ class BlackJack():
                               5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8,
                               9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10,
                               10, 10, 10, 10, 10, 10, 10, 10] * self.number_decks
+        
+        # Players and croupier counts. croupier count is the last value of the array
+        self.players_count_hard  = np.zeros(self.number_players + 1, dtype=int)
+        self.players_count_soft  = np.zeros(self.number_players + 1, dtype=int)
+        self.players_final_count = np.zeros(self.number_players + 1, dtype=int)
         
         # Flag for soft counts
         self.flag_player_playing_soft = np.full(self.number_players + 1, False, dtype=bool)
