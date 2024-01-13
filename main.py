@@ -18,7 +18,7 @@ for ii in range(game_rounds):
     for jj in range(number_players):
         if not blackjack.flag_blackjack[jj]:
             print("Player", jj+1, "starts the round")
-            blackjack.player_round(jj, flag_delete = True)
+            blackjack.player_round(jj, jj, flag_first_entrance = True)
         else:
             print("Player", jj+1, "has a blackjack")
         
