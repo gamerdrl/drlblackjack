@@ -37,7 +37,7 @@ class BlackJack():
         self.flag_blackjack = np.full(self.number_players + 1, False, dtype=bool)
         
         # Flag to indicate if players has doubled
-        self.flag_double = np.full(self.number_players, False, dtype=bool)
+        self.flag_double = np.ones(self.number_players, dtype=int)
         
         # Flag to indicate that split is available
         self.flag_split = np.full(self.number_players, False, dtype=bool)
@@ -84,6 +84,7 @@ class BlackJack():
                 
             print("Player", ii+1, "gets a", dealt_card, "and sums", self.players_count_hard[ii])
     
+    
     def player_round(self, original_player, player_id, flag_first_entrance = False):
         # Original player is the player that is playing the round
         # player_id will refer the the position in the array vector.
@@ -118,7 +119,7 @@ class BlackJack():
             if action == 2:  # Player doubles the bet
                 action = 1       # Do as a normal hit
                 playing = False  # and end the game
-                self.flag_double[player_id] = True
+                self.flag_double[player_id] = 2
             
             if action == 0:
                 playing = False  # End player round
@@ -161,7 +162,7 @@ class BlackJack():
                 # Add the value to the flags
                 self.flag_player_playing_soft = np.insert(self.flag_player_playing_soft, player_id+1, self.flag_player_playing_soft[player_id])
                 self.flag_blackjack = np.insert(self.flag_blackjack, player_id+1, False)
-                self.flag_double = np.insert(self.flag_double, player_id+1, False)
+                self.flag_double = np.insert(self.flag_double, player_id+1, 1)
                 self.flag_split = np.insert(self.flag_split, player_id+1, False)
                 # Reset split flag of player_id to False
                 self.flag_split[player_id] = False
@@ -220,18 +221,13 @@ class BlackJack():
                     print("Player", player_id+1, "has a blackjack")
                 playing = False  # Once all splits have ended, end player round
                 
-                
-                
-                
-                
-                
-                
         if not action == 3:
             if not self.flag_player_playing_soft[player_id] or self.players_count_hard[player_id] <= 21:  # Player does not have an As or has an As but still ends with the hard count
                 self.players_final_count[player_id] = self.players_count_hard[player_id]
             else:  # Player has an As and ends with the soft count
                 self.players_final_count[player_id] = self.players_count_soft[player_id]
                     
+                
     def croupier_round(self, stands_on_17):
         if stands_on_17:
             croupier_stands = 17
@@ -318,29 +314,24 @@ class BlackJack():
             self.possible_actions.append(4)
     
     
-    def budget_delivery(self, bet_original):
+    def budget_delivery(self, bet):
         #[18, 22, 14,   20, 26,   20, 24,   20]
         croupier_count = self.players_final_count[-1]  # Note tha in the case where all player have passed this value will be 0, but the fact that players passed is dominant
         player_id = -1  # This will be used as a counter to point to the correct position of the arrays
         for ii in range(self.number_players):
             for jj in range(self.players_splits[ii] + 1):
-                bet = bet_original
                 player_id += 1
-                if self.flag_double[player_id]:
-                    bet = 2*bet
                 player_count = self.players_final_count[player_id]  # Note that in the case where the player has a blackjack this value will be 0, but flag_flagjack will appear before
                 if player_count > 21:  # Player has passed, so player losses
-                    self.players_budget[ii] = self.players_budget[ii] - bet
+                    self.players_budget[ii] = self.players_budget[ii] - bet*self.flag_double[player_id]
                 else:  # Player has not passed
                     if self.flag_blackjack[player_id]:  # Player has a blackjack
                         if not self.flag_blackjack[-1]:  # And croupier does not
                             self.players_budget[ii] = self.players_budget[ii] + 1.5*bet
                     elif croupier_count > 21: # Croupier has passed, so player wins
-                        self.players_budget[ii] = self.players_budget[ii] + bet
+                        self.players_budget[ii] = self.players_budget[ii] + bet*self.flag_double[player_id]
                     elif player_count > croupier_count:  # Player is closer to 21, so player wins
-                        self.players_budget[ii] = self.players_budget[ii] + bet
+                        self.players_budget[ii] = self.players_budget[ii] + bet*self.flag_double[player_id]
                     elif player_count < croupier_count: # Croupier is closer to 21, so player losses
-                        self.players_budget[ii] = self.players_budget[ii] - bet
+                        self.players_budget[ii] = self.players_budget[ii] - bet*self.flag_double[player_id]
                     # else game is tied so no need to adjust budget
-        
-        
