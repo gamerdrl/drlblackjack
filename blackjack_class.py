@@ -306,12 +306,10 @@ class BlackJack():
         if self.flag_first_action:
             self.possible_actions.append(2)
             self.flag_first_action = False
-        
-        if flag_split:
-            self.possible_actions.append(3)
-            
-        if croupier_count == 11:  # Add the possibility of protect if croupier has an As
-            self.possible_actions.append(4)
+            if flag_split:
+                self.possible_actions.append(3)
+            if croupier_count == 11:  # Add the possibility of protect if croupier has an As
+                self.possible_actions.append(4)
     
     
     def budget_delivery(self, bet):
