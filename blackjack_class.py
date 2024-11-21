@@ -10,9 +10,10 @@ import numpy as np
 import random
 
 class BlackJack():
-    def __init__(self, number_players, number_decks):
+    def __init__(self, number_players, number_decks, debug):
         self.number_players = number_players
         self.number_decks = number_decks
+        self.debug = debug
         
         # Players budget
         self.players_budget = np.zeros(self.number_players)
@@ -56,9 +57,9 @@ class BlackJack():
                 self.players_count_soft[ii] = dealt_card
             # This if is only for the print
             if ii < self.number_players:
-                print("Player", ii+1, "gets a", dealt_card)
+                if self.debug: print("Player", ii+1, "gets a", dealt_card)
             else:
-                print("Croupier gets a", dealt_card)
+                if self.debug: print("Croupier gets a", dealt_card)
         
         # Deal the second card to each player
         for ii in range(self.number_players):  # Croupier does not receive card now
@@ -82,7 +83,7 @@ class BlackJack():
                 if dealt_card == 10:
                     self.flag_blackjack[ii] = True  # Player has a blackjack
                 
-            print("Player", ii+1, "gets a", dealt_card, "and sums", self.players_count_hard[ii])
+            if self.debug: print("Player", ii+1, "gets a", dealt_card, "and sums", self.players_count_hard[ii])
     
     
     def player_round(self, original_player, player_id, flag_first_entrance = False):
@@ -115,7 +116,7 @@ class BlackJack():
                 action_string = "splits"
             elif action == 4:
                 action_string = "protects"
-            print("Player", player_id+1, action_string)
+            if self.debug: print("Player", player_id+1, action_string)
             if action == 2:  # Player doubles the bet
                 action = 1       # Do as a normal hit
                 playing = False  # and end the game
@@ -137,21 +138,21 @@ class BlackJack():
                 else:  # Player had an As
                     self.players_count_hard[player_id] = self.players_count_hard[player_id] + dealt_card
                     self.players_count_soft[player_id] = self.players_count_soft[player_id] + dealt_card
-                print("The card is a", dealt_card, "and count is", self.players_count_hard[player_id])
+                if self.debug: print("The card is a", dealt_card, "and count is", self.players_count_hard[player_id])
                 if self.players_count_hard[player_id] > 21:
                     if not self.flag_player_playing_soft[player_id]:  # Player does not have an As
                         playing = False  # End player round
-                        print("Player", player_id+1, "is over 21 and losses the round")
+                        if self.debug: print("Player", player_id+1, "is over 21 and losses the round")
                     else:
                         if self.players_count_soft[player_id] > 21:
                             playing = False  # End player round
-                            print("Player", player_id+1, "is over 21 and losses the round")
+                            if self.debug: print("Player", player_id+1, "is over 21 and losses the round")
                         elif self.players_count_soft[player_id] == 21:
                             playing = False   # End player round
-                            print("Player", player_id+1, "gets a 21 and stands")
+                            if self.debug: print("Player", player_id+1, "gets a 21 and stands")
                 elif self.players_count_hard[player_id] == 21:
                     playing = False  # End player round
-                    print("Player", player_id+1, "gets a 21 and stands")
+                    if self.debug: print("Player", player_id+1, "gets a 21 and stands")
             elif action == 3:  # Player splits
                 self.players_count_hard[player_id] /= 2  # Split the count
                 self.players_count_soft[player_id] /= 2
@@ -186,11 +187,11 @@ class BlackJack():
                     self.players_count_soft[player_id] = self.players_count_soft[player_id] + dealt_card
                     if dealt_card == 10:
                         self.flag_blackjack[player_id] = True  # Player has a blackjack
-                print("The card is a", dealt_card, "and count is", self.players_count_hard[player_id], "for the split")
+                if self.debug: print("The card is a", dealt_card, "and count is", self.players_count_hard[player_id], "for the split")
                 if not self.flag_blackjack[player_id]:
                     self.player_round(original_player, player_id)
                 else:
-                    print("Player", player_id+1, "has a blackjack")
+                    if self.debug: print("Player", player_id+1, "has a blackjack")
                 self.players_splits[original_player] += 1  # Add 1 split to player count
                 
                 # Play the second card splited
@@ -214,11 +215,11 @@ class BlackJack():
                     self.players_count_soft[player_id] = self.players_count_soft[player_id] + dealt_card
                     if dealt_card == 10:
                         self.flag_blackjack[player_id] = True  # Player has a blackjack
-                print("The card is a", dealt_card, "and count is", self.players_count_hard[player_id], "for the split")
+                if self.debug: print("The card is a", dealt_card, "and count is", self.players_count_hard[player_id], "for the split")
                 if not self.flag_blackjack[player_id]:
                     self.player_round(original_player, player_id)
                 else:
-                    print("Player", player_id+1, "has a blackjack")
+                    if self.debug: print("Player", player_id+1, "has a blackjack")
                 playing = False  # Once all splits have ended, end player round
                 
         if not action == 3:
@@ -254,7 +255,7 @@ class BlackJack():
             if dealt_card == 10:
                 self.flag_blackjack[-1] = True  # Croupier has a blackjack
                     
-        print("Croupier deals a", dealt_card, "and count is", self.players_count_hard[-1])
+        if self.debug: print("Croupier deals a", dealt_card, "and count is", self.players_count_hard[-1])
         
         # Play until stand
         while self.players_count_hard[-1] < croupier_stands:  # self.players_count_hard[-1] is croupier count
@@ -273,7 +274,7 @@ class BlackJack():
                 self.players_count_hard[-1] = self.players_count_hard[-1] + dealt_card  # Add the card to the croupier count
                 self.players_count_soft[-1] = self.players_count_soft[-1] + dealt_card
                     
-            print("Croupier deals a", dealt_card, "and count is", self.players_count_hard[-1])
+            if self.debug: print("Croupier deals a", dealt_card, "and count is", self.players_count_hard[-1])
             
         if self.players_count_hard[-1] > 21 and self.flag_player_playing_soft[-1]:  # Croupier has an As an has another chance with the soft count
             while self.players_count_soft[-1] < croupier_stands:  # self.players_count_soft[-1] is croupier soft count
@@ -283,7 +284,7 @@ class BlackJack():
                 self.players_count_hard[-1] = self.players_count_hard[-1] + dealt_card  # Add the card to the croupier count
                 self.players_count_soft[-1] = self.players_count_soft[-1] + dealt_card
                 
-                print("Croupier deals a", dealt_card, "and soft count is", self.players_count_soft[-1])
+                if self.debug: print("Croupier deals a", dealt_card, "and soft count is", self.players_count_soft[-1])
                 
         if not self.flag_player_playing_soft[-1] or self.players_count_hard[-1] <= 21:  # Croupier does not have an As orhas an As but still ends with the hard count
             self.players_final_count[-1] = self.players_count_hard[-1]
@@ -292,9 +293,9 @@ class BlackJack():
         
         # This if is for the print
         if self.players_final_count[-1] > 21:
-            print("Croupier passes 21 and player wins")
+            if self.debug: print("Croupier passes 21 and player wins")
         else:
-            print("Croupier stands with", self.players_final_count[-1])
+            if self.debug: print("Croupier stands with", self.players_final_count[-1])
         
         
     def get_possible_actions(self, player_count, flag_split, croupier_count):  # TODO: develope this

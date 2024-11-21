@@ -6,10 +6,10 @@ Created on Wed Jan  3 11:29:52 2024
 @author: fran
 """
 
-from parameters import number_players, number_decks, stands_on_17, bet, game_rounds
+from parameters import number_players, number_decks, stands_on_17, bet, game_rounds, debug
 from blackjack_class import BlackJack
 
-blackjack = BlackJack(number_players, number_decks)
+blackjack = BlackJack(number_players, number_decks, debug)
 
 for ii in range(game_rounds):
     blackjack.game_initialization()
@@ -17,10 +17,10 @@ for ii in range(game_rounds):
     # Player rounds
     for jj in range(number_players):
         if not blackjack.flag_blackjack[jj]:
-            print("Player", jj+1, "starts the round")
+            if debug: print("Player", jj+1, "starts the round")
             blackjack.player_round(jj, jj, flag_first_entrance = True)
         else:
-            print("Player", jj+1, "has a blackjack")
+            if debug: print("Player", jj+1, "has a blackjack")
         
     # Croupier round
     croupier_playing = any(value <= 21 for value in blackjack.players_count_soft[0:-1])
@@ -32,7 +32,7 @@ for ii in range(game_rounds):
     # Budget delivery
     blackjack.budget_delivery(bet)
 
-    print(blackjack.players_count_hard)
-    print(blackjack.players_budget)
+    if debug: print(blackjack.players_count_hard)
+    if debug: print(blackjack.players_budget)
 
-print(blackjack.players_budget)
+if debug: print(blackjack.players_budget)
